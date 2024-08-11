@@ -57,7 +57,33 @@ export const updateUser = async (req, res) => {
 
 export const getAllUsers = async (req, res) => {
     try {
-        const users = await prisma.user.findMany({});
+        const users = await prisma.user.findMany({
+
+            select: {
+                post: {
+                    where: {
+                        OR: [
+                            {
+                                title: {
+                                    startsWith: "Second"
+                                }
+                            }, {
+                                title: {
+                                    endsWith: "post"
+                                }
+                            }
+                        ]
+
+                    }
+                },
+                _count: {
+                    select: {
+                        post: true
+                    }
+                }
+            }
+
+        });
         if (!users) {
             return res.json({ status: 400, message: "Users not found" })
         }
